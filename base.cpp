@@ -9,13 +9,19 @@
 #define INF 987654321
 #define vi vector<int>
 #define sq(x) ((x) * (x))
-#define FOR(i, n) for (int i = 0; i < (n); ++i)
+#define rep(from, to, stride) for (auto i = (from); i < (to); i += (stride))
+#define rrep(from, to, stride) for (auto i = (from)-1; i >= (to); i -= (stride))
+#define fastio                           \
+  ios::ios_base::sync_with_stdio(false); \
+  cin.tie(NULL);
 
-typedef long long ll;
-
+using ll = long long;
 using namespace std;
 
-int main() {
-  ios::ios_base::sync_with_stdio(false);
-  cin.tie(NULL);
+void solve() {
+}
+
+unsigned main() {
+  fastio
+  solve();
 }
