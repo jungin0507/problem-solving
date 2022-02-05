@@ -11,9 +11,6 @@
 #define sq(x) ((x) * (x))
 #define rep(from, to, stride) for (auto i = (from); i < (to); i += (stride))
 #define rrep(from, to, stride) for (auto i = (from)-1; i >= (to); i -= (stride))
-#define fastio                           \
-  ios::ios_base::sync_with_stdio(false); \
-  cin.tie(NULL);
 
 using ll = long long;
 using namespace std;
@@ -21,7 +18,8 @@ using namespace std;
 void solve() {
 }
 
-unsigned main() {
-  fastio
+int main() {
+  ios::ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
   solve();
 }
