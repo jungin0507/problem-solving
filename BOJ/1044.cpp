@@ -6,7 +6,7 @@
 #define pid pair<int, double>
 #define pll pair<ll, ll>
 #define pli pair<ll, int>
-#define INF 9876543210000
+#define INF 0x7fffffffffffffffL
 #define vi vector<int>
 #define sq(x) ((x) * (x))
 #define rep(from, to, stride) for (auto i = (from); i < (to); i += (stride))
@@ -20,8 +20,17 @@ const int MAX_N = 36;
 int N;
 ll s1[MAX_N];
 ll s2[MAX_N];
-pll a1[MAX_N];
-pll a2[MAX_N];
+vector<pll> a1[MAX_N];
+vector<pll> a2[MAX_N];
+
+int bit_count(int b) {
+  int c = 0;
+  while (b) {
+    if (b % 2) ++c;
+    b >>= 1;
+  }
+  return c;
+}
 
 void solve() {
   cin >> N;
@@ -40,10 +49,10 @@ void solve() {
       }
       tmp >>= 1;
     }
-    a1[b] = make_pair(sum1 - sum2, b);
+    a1[bit_count(b)].emplace_back(sum1 - sum2, b);
   }
 
-  for (int b = 0; b < (1 << (N - N / 2)); ++b) {
+  for (int b = 0; b < (1 << (N / 2)); ++b) {
     int tmp = b;
     ll sum1 = 0;
     ll sum2 = 0;
@@ -55,34 +64,40 @@ void solve() {
       }
       tmp >>= 1;
     }
-    a2[b] = make_pair(sum1 - sum2, b);
+    a2[bit_count(b)].emplace_back(sum1 - sum2, b);
   }
-  sort(a1, a1 + (1 << (N / 2)));
-  sort(a2, a2 + (1 << (N - N / 2)), [&](const pll &a, const pll &b) {
-    if (a.first == b.first)
-      return a.second > b.second;
-    return a.first < b.first;
-  });
+
+  for (int i = 0; i < N; ++i) {
+    sort(a1[i].begin(), a1[i].end());
+    sort(a2[i].begin(), a2[i].end(), [&](const pll &a, const pll &b) {
+      if (a.first == b.first)
+        return a.second > b.second;
+      return a.first < b.first;
+    });
+  }
 
   ll mn = INF;
   ll ans = 0;
-  int i = 0, j = (1 << (N - N / 2)) - 1;
-  while (i < (1 << (N / 2)) && j >= 0) {
-    if (mn > abs(a1[i].first + a2[j].first)) {
-      mn = abs(a1[i].first + a2[j].first);
-      ans = a1[i].second << (N - N / 2) | a2[j].second;
-    } else if (mn == abs(a1[i].first + a2[j].first) && ans > (a1[i].second << (N - N / 2) | a2[j].second)) {
-      ans = a1[i].second << (N - N / 2) | a2[j].second;
-    }
 
-    if (j == 0)
-      ++i;
-    else if (i == (1 << (N / 2)) - 1)
-      --j;
-    else if (a1[i].first + a2[j].first < 0)
-      ++i;
-    else
-      --j;
+  for (int n = 0; n <= N / 2; ++n) {
+    int i = 0, j = a2[N / 2 - n].size() - 1;
+    while (i < a1[n].size() && j >= 0) {
+      if (mn > abs(a1[n][i].first + a2[N / 2 - n][j].first)) {
+        mn = abs(a1[n][i].first + a2[N / 2 - n][j].first);
+        ans = a1[n][i].second << (N / 2) | a2[N / 2 - n][j].second;
+      } else if (mn == abs(a1[n][i].first + a2[N / 2 - n][j].first) && ans > (a1[n][i].second << (N / 2) | a2[N / 2 - n][j].second)) {
+        ans = a1[n][i].second << (N / 2) | a2[N / 2 - n][j].second;
+      }
+
+      if (j == 0)
+        ++i;
+      else if (i == a1[n].size() - 1)
+        --j;
+      else if (a1[n][i].first + a2[N / 2 - n][j].first <= 0)
+        ++i;
+      else
+        --j;
+    }
   }
 
   string prt = "";
