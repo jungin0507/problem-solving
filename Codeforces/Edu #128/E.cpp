@@ -47,12 +47,55 @@ void solve();
 signed main() {
   fastio;
   int T = 1;
-  // cin >> T;
+  cin >> T;
   while (T-- > 0) solve();
 }
 
 const int MAX_N = 1e5 + 5;
-const int INF = 0x7fffffff;
+const int INF = 0x3f3f3f3f;
 
 void solve() {
+  int N;
+  cin >> N;
+  vector<vector<int>> board(2, vector<int>(N + 2));
+  string S;
+  cin >> S;
+  for (int i = 1; i <= N; ++i) {
+    if (S[i - 1] == '*') board[0][i] = 1;
+  }
+  cin >> S;
+  for (int i = 1; i <= N; ++i) {
+    if (S[i - 1] == '*') board[1][i] = 1;
+  }
+
+  vector<vector<int>> DP(2, vector<int>(N + 1, INF));
+  for (int i = 1; i <= N; ++i) {
+    DP[0][i] = min(DP[0][i], DP[0][i - 1] + 1 + (board[1][i] == 1));
+    DP[0][i] = min(DP[0][i], DP[1][i - 1] + 2);
+    if (DP[0][i] == INF) {
+      if (board[1][i])
+        DP[0][i] = 1;
+      else if (board[0][i])
+        DP[0][i] = 0;
+    }
+    DP[1][i] = min(DP[1][i], DP[1][i - 1] + 1 + (board[0][i] == 1));
+    DP[1][i] = min(DP[1][i], DP[0][i - 1] + 2);
+    if (DP[1][i] == INF) {
+      if (board[0][i])
+        DP[1][i] = 1;
+      else if (board[1][i])
+        DP[1][i] = 0;
+    }
+  }
+  // for (int i = 0; i < 2; ++i) {
+  //   for (int j = 1; j <= N; ++j) {
+  //     cout << DP[i][j] << ' ';
+  //   }
+  //   cout << "\n";
+  // }
+  int e = N;
+  for (; e > 0; --e) {
+    if (board[0][e] == 1 || board[1][e] == 1) break;
+  }
+  cout << min(DP[0][e], DP[1][e]) << "\n";
 }
