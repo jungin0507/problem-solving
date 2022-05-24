@@ -42,6 +42,7 @@ template <class T1, class T2>
 void operator-=(pair<T1, T2> &x, pair<T1, T2> y) {
   x = x - y;
 }
+
 void solve();
 
 signed main() {
@@ -61,110 +62,73 @@ void solve() {
   for (int i = 0; i < N; ++i) cin >> P[i];
   ll M;
   cin >> M;
-
   vector<ll> res(N);
-  ll mn = INF;
-  int x = N - 1;
-  for (int i = 1; i < N; ++i) {
-    if (P[i] <= mn) {
-      mn = P[i];
-      x = i;
+  ll mn = *min_element(P.rbegin(), P.rend());
+  int x = N - 1 - (min_element(P.rbegin(), P.rend()) - P.rbegin());
+  if (mn > M) {
+    cout << "0\n\n\n";
+    return;
+  } else if (*min_element(P.rbegin(), P.rend() - 1) > M) {
+    cout << "1\n0\n0\n";
+    return;
+  }
+  if (x == 0) {
+    res[x] = (M - *min_element(P.rbegin(), P.rend() - 1)) / mn;
+    int y = N - 1 - (min_element(P.rbegin(), P.rend() - 1) - P.rbegin());
+    res[y] = 1;
+    M -= P[x] * res[x];
+    M -= P[y] * res[y];
+    for (int i = N - 1; i > y && M; --i) {
+      ll num = min(M / (P[i] - P[y]), res[y]);
+      res[i] += num;
+      res[y] -= num;
+      M -= (P[i] - P[y]) * num;
     }
+  } else {
+    res[x] = M / mn;
+    M -= P[x] * res[x];
   }
-  ll k = M / mn;
-  ll r = M % mn;
-  for (int i = N - 1; i > x && k >= r / (P[i] - mn); --i) {
-    ll diff = P[i] - mn;
-    res[i] = r / diff;
-    k -= res[i];
-    r %= diff;
+  for (int i = N - 1; i > x && M; --i) {
+    ll num = min(M / (P[i] - P[x]), res[x]);
+    res[i] += num;
+    res[x] -= num;
+    M -= (P[i] - P[x]) * num;
   }
-  res[x] = k;
 
-  vector<ll> res2(N);
-  if (P[0] < mn) {
-    M -= mn;
-    k = M / P[0];
-    r = M % P[0];
-    ll sum = 0;
-    for (int i = N - 1; i > 0 && k >= r / (P[i] - P[0]); --i) {
-      ll diff = P[i] - P[0];
-      res2[i] = r / diff;
-      k -= res2[i];
-      r %= diff;
-      sum += P[i] * res2[i];
-    }
-    res2[0] = k;
-    sum += P[0] * k;
-    for (int i = N - 1; i > 0; --i) {
-      if (P[i] <= mn + M - sum) {
-        res2[i]++;
-        break;
+  ll sum = 0;
+  for (int i = 0; i < N; ++i) sum += res[i];
+  cout << sum << "\n";
+  {
+    vector<ll> tmp = res;
+    string s = "";
+    ll len = min(50LL, sum);
+    int idx = N - 1;
+    while (len) {
+      if (!tmp[idx]) {
+        --idx;
+        continue;
       }
+      s += '0' + idx;
+      --tmp[idx];
+      --len;
     }
+    cout << s.substr(0, min(50, (int)s.length())) << "\n";
   }
-
-  int sz1 = 0;
-  int sz2 = 0;
-  // for (int i = 0; i < N; ++i) {
-  //   if (res[i]) ++sz1;
-  //   if (res2[i]) ++sz2;
-  // }
-  // if (!sz1 && !sz2) {
-  //   cout << 0 << "\n";
-  //   return;
-  // } else if (!sz1 && sz2 == 1) {
-  //   cout << 1 << "\n";
-  //   cout << 0 << "\n";
-  //   cout << 0 << "\n";
-  //   return;
-  // }
-  // string s1 = "";
-  // ll limit = 100;
-  // for (int i = N - 1; i >= 0; --i) {
-  //   if (!res[i]) continue;
-  //   s1 += string(min(limit, res[i]), '0' + i);
-  //   limit -= min(limit, res[i]);
-  // }
-  // string s2 = "";
-  // limit = 100;
-  // for (int i = N - 1; i >= 0; --i) {
-  //   if (!res2[i]) continue;
-  //   s2 += string(min(limit, res2[i]), '0' + i);
-  //   limit -= min(limit, res2[i]);
-  // }
-  // cout << max(sz1, sz2) << "\n";
-  // if (sz1 > sz2) {
-  //   if (s1.length() < 50) {
-  //     cout << s1 << "\n";
-  //     cout << s1 << "\n";
-  //   } else {
-  //     cout << s1.substr(0, 50) << "\n";
-  //     cout << s1.substr(50) << "\n";
-  //   }
-  // } else if (sz1 < sz2) {
-  //   if (s2.length() < 50) {
-  //     cout << s2 << "\n";
-  //     cout << s2 << "\n";
-  //   } else {
-  //     cout << s2.substr(0, 50) << "\n";
-  //     cout << s2.substr(50) << "\n";
-  //   }
-  // } else if (s1 > s2) {
-  //   if (s1.length() < 50) {
-  //     cout << s1 << "\n";
-  //     cout << s1 << "\n";
-  //   } else {
-  //     cout << s1.substr(0, 50) << "\n";
-  //     cout << s1.substr(50) << "\n";
-  //   }
-  // } else {
-  //   if (s2.length() < 50) {
-  //     cout << s2 << "\n";
-  //     cout << s2 << "\n";
-  //   } else {
-  //     cout << s2.substr(0, 50) << "\n";
-  //     cout << s2.substr(50) << "\n";
-  //   }
-  // }
+  {
+    vector<ll> tmp = res;
+    string s = "";
+    ll len = min(50LL, sum);
+    int idx = 0;
+    while (len) {
+      if (!tmp[idx]) {
+        ++idx;
+        continue;
+      }
+      s += '0' + idx;
+      --tmp[idx];
+      --len;
+    }
+    reverse(all(s));
+    cout << s.substr(0, min(50, (int)s.length())) << "\n";
+  }
 }
