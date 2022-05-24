@@ -1,12 +1,10 @@
 #include <bits/stdc++.h>
 
 // #define int long long
-#define fi first
-#define se second
 #define sq(x) ((x) * (x))
 #define all(x) x.begin(), x.end()
-#define rep(i, n) for (auto i = 0; i < (n); ++i)
-#define rrep(i, n) for (auto i = (n)-1; i >= 0; --i)
+#define rep(from, to, stride) for (auto i = (from); i < (to); i += (stride))
+#define rrep(from, to, stride) for (auto i = (from)-1; i >= (to); i -= (stride))
 #define fastio                             \
   {                                        \
     ios::ios_base::sync_with_stdio(false); \
@@ -22,15 +20,11 @@ using pdd = pair<double, double>;
 using pid = pair<int, double>;
 using pll = pair<ll, ll>;
 using pli = pair<ll, int>;
+using vi = vector<int>;
 
-/* operators of std::pair<T1, T2> */
 template <class T1, class T2>
 ostream &operator<<(ostream &o, pair<T1, T2> x) {
   return o << x.first << ' ' << x.second;
-}
-template <class T1, class T2>
-istream &operator>>(istream &i, pair<T1, T2> &x) {
-  return i >> x.first >> x.second;
 }
 template <class T1, class T2>
 pair<T1, T2> operator+(pair<T1, T2> x, pair<T1, T2> y) {
@@ -48,41 +42,79 @@ template <class T1, class T2>
 void operator-=(pair<T1, T2> &x, pair<T1, T2> y) {
   x = x - y;
 }
-
-/* operators of std::vector<T> */
-template <class T>
-ostream &operator<<(ostream &o, vector<T> v) {
-  for (auto it = v.begin(); it != v.end(); ++it) {
-    o << (*it) << ' ';
-  }
-  return o;
-}
-template <class T>
-istream &operator>>(istream &i, vector<T> &v) {
-  for (auto it = v.begin(); it != v.end(); ++it) {
-    i >> (*it);
-  }
-  return i;
-}
 void solve();
-void preproc();
 
 signed main() {
   fastio;
   int T = 1;
   // cin >> T;
-  preproc();
   while (T-- > 0) solve();
 }
 
-/* actual code */
-
 const int MAX_N = 1e5 + 5;
 const int INF = 0x7fffffff;
-const ll MOD = 1e9 + 7;
 
-void preproc() {
+bool chk(ll v) {
+  while (v) {
+    if (v % 10 > 1) return true;
+    v /= 10;
+  }
+  return false;
+}
+
+int cnt(ll v) {
+  int ret = 0;
+  while (v) {
+    ++ret;
+    v /= 10;
+  }
+  return ret;
+}
+
+vector<int> edge(ll X, ll v) {
+  vector<bool> chk(10);
+  ll tmp = X * v;
+  while (tmp) {
+    chk[tmp % 10] = true;
+    tmp /= 10;
+  }
+  vector<int> res;
+  for (int i = 2; i < 10; ++i) {
+    if (chk[i]) res.push_back(i);
+  }
+  return res;
 }
 
 void solve() {
+  ll N, X;
+  cin >> N >> X;
+  if (!chk(X)) {
+    cout << -1 << "\n";
+    return;
+  }
+  map<ll, ll> dist;
+  dist[1] = 0;
+  deque<ll> deq;
+  deq.push_front(1);
+  ll ans = -1;
+  while (!deq.empty()) {
+    ll x = deq.front();
+    deq.pop_front();
+    if (cnt(X * x) > N)
+      continue;
+    else if (cnt(X * x) == N) {
+      ans = x;
+      break;
+    }
+    vector<int> e = edge(X, x);
+    for (int i = 0; i < e.size(); ++i) {
+      ll next = x * e[i];
+      ll next_dist = dist[x] + 1;
+      if (dist.find(next) == dist.end() || next_dist < dist[next]) {
+        dist[next] = next_dist;
+        deq.push_back(next);
+      }
+    }
+  }
+  cout << dist[ans] << "\n";
 }
