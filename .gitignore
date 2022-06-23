@@ -3,3 +3,5 @@
 !*/
 .vscode
 tempCodeRunnerFile.cpp
+/cmake-build-debug
+CMakeLists.txt
