@@ -1,0 +1,9 @@
+*
+!*.*
+!*/
+.vscode
+tempCodeRunnerFile.cpp
+cmake-build-*/
+CMakeLists.txt
+.idea/
+.DS_Store
