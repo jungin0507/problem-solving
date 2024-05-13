@@ -6,7 +6,7 @@
 #define sq(x) ((x) * (x))
 #define all(x) x.begin(), x.end()
 #define rep(i, n) for (auto i = 0; i < (n); ++i)
-#define rrep(i, n) for (auto i = (n) -1; i >= 0; --i)
+#define rrep(i, n) for (auto i = (n) - 1; i >= 0; --i)
 #define fastio                             \
   {                                        \
     ios::ios_base::sync_with_stdio(false); \

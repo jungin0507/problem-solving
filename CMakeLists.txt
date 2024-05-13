@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.29)
+project(ps)
+set(CMAKE_EXPORT_COMPILE_COMMANDS on)
+add_executable(ps base.cpp)
+target_compile_features(ps PRIVATE cxx_std_17)
+include_directories("/usr/local/include")
